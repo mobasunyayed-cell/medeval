@@ -1,6 +1,11 @@
 # medeval
 
 [![CI](https://github.com/mobasunyayed-cell/medeval/actions/workflows/ci.yml/badge.svg)](https://github.com/mobasunyayed-cell/medeval/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/mobasunyayed-cell/medeval/actions/workflows/codeql.yml/badge.svg)](https://github.com/mobasunyayed-cell/medeval/actions/workflows/codeql.yml)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
+
+**Documentation:** https://mobasunyayed-cell.github.io/medeval/
 
 A small, dependency-free Python toolkit for evaluating language-model answers on medical questions. It answers three questions that a bare accuracy number does not:
 
@@ -21,6 +26,13 @@ cd medeval
 pip install -e .            # core, no third-party dependencies
 pip install -e ".[dev]"     # plus pytest, ruff, mypy
 pip install -e ".[anthropic]"   # optional: evaluate Claude models through the API
+```
+
+Or with Docker:
+
+```bash
+docker build -t medeval .
+docker run --rm medeval validate data/sample_mcq.jsonl
 ```
 
 Python 3.10 or newer.

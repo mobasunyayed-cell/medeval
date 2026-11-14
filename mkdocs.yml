@@ -1,0 +1,9 @@
+site_name: medeval
+site_description: Evaluate language-model answers on medical questions
+repo_url: https://github.com/mobasunyayed-cell/medeval
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Statistics: statistics.md
