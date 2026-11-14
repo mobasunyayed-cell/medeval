@@ -1,0 +1,12 @@
+{
+  "id": "anaphylaxis-first-response",
+  "criteria": [
+    {"name": "Intramuscular epinephrine", "any_of": ["intramuscular epinephrine", "IM epinephrine", "IM adrenaline", "intramuscular adrenaline"], "weight": 3},
+    {"name": "Lateral thigh site", "any_of": ["lateral thigh", "anterolateral thigh", "vastus lateralis"], "weight": 1},
+    {"name": "Call for emergency help", "any_of": ["call for help", "emergency services", "activate emergency", "call an ambulance"], "weight": 1},
+    {"name": "Airway and circulation support", "any_of": ["airway", "oxygen", "IV fluids", "intravenous fluids"], "weight": 1}
+  ],
+  "penalties": [
+    {"name": "Antihistamine as first-line", "any_of": ["antihistamine first", "give an antihistamine first"], "amount": 2}
+  ]
+}
