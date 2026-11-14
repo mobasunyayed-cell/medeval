@@ -78,3 +78,37 @@ def test_module_entry_point_requires_a_command(capsys):
     with pytest.raises(SystemExit) as exc:
         runpy.run_module("medeval", run_name="__main__", alter_sys=True)
     assert exc.value.code == 2  # argparse: a subcommand is required
+
+
+def test_run_with_workers_retries_and_checkpoint_resumes(tmp_path, capsys):
+    out, ck = str(tmp_path / "r.json"), str(tmp_path / "ck.jsonl")
+    base = ["run", "--data", DATA, "--model", "simulated:1.0", "--out", out]
+    assert (
+        main([*base, "--workers", "3", "--retries", "2", "--backoff", "0", "--checkpoint", ck]) == 0
+    )
+    assert "24/24 correct" in capsys.readouterr().out
+    assert main([*base, "--checkpoint", ck]) == 0  # second run reuses every answer
+    captured = capsys.readouterr()
+    assert "resuming from checkpoint" in captured.err and "24/24 correct" in captured.out
+
+
+@pytest.mark.parametrize("flag", [["--workers", "0"], ["--retries", "-1"], ["--backoff", "-1"]])
+def test_run_rejects_bad_resilience_settings(flag, tmp_path, capsys):
+    argv = ["run", "--data", DATA, "--model", "random", "--out", str(tmp_path / "x.json"), *flag]
+    assert main(argv) == 2
+    assert capsys.readouterr().err.startswith("error:")
+
+
+def test_report_bootstrap_and_agreement(tmp_path, capsys):
+    a, b = str(tmp_path / "a.json"), str(tmp_path / "b.json")
+    main(["run", "--data", DATA, "--model", "simulated:0.9", "--out", a])
+    main(["run", "--data", DATA, "--model", "simulated:0.6", "--out", b])
+    capsys.readouterr()
+
+    assert main(["report", a, "--ci", "bootstrap"]) == 0
+    assert "95% CI (bootstrap)" in capsys.readouterr().out
+
+    assert main(["agreement", a, b]) == 0
+    out = capsys.readouterr().out
+    assert "shared questions: 24" in out and "Cohen's kappa:" in out
+    assert main(["agreement", a, str(tmp_path / "missing.json")]) == 2

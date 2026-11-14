@@ -72,7 +72,7 @@ def load_questions(path: str | Path) -> list[Question]:
 
     questions: list[Question] = []
     seen: set[str] = set()
-    for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+    for number, raw in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
         raw = raw.strip()
         if not raw or raw.startswith("#"):
             continue

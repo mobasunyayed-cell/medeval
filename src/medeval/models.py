@@ -15,6 +15,10 @@ class ModelError(RuntimeError):
     """Raised when a model cannot be created or fails to answer."""
 
 
+class PermanentError(ModelError):
+    """A failure that retrying cannot fix, such as a missing recorded answer."""
+
+
 class ModelClient(Protocol):
     name: str
 
@@ -68,7 +72,7 @@ class ReplayModel:
             raise ModelError(f"replay file not found: {path}")
         self.name = f"replay:{path.stem}"
         self._responses: dict[str, str] = {}
-        for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        for number, raw in enumerate(path.read_text(encoding="utf-8").split("\n"), start=1):
             raw = raw.strip()
             if not raw:
                 continue
@@ -82,7 +86,7 @@ class ReplayModel:
         try:
             return self._responses[question.id]
         except KeyError:
-            raise ModelError(f"no recorded response for question {question.id!r}") from None
+            raise PermanentError(f"no recorded response for question {question.id!r}") from None
 
 
 class AnthropicModel:
