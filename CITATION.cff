@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "medeval: evaluate language-model answers on medical questions"
+type: software
+version: 0.2.0
+date-released: 2026-11-14
+license: MIT
+repository-code: "https://github.com/mobasunyayed-cell/medeval"
+authors:
+  - family-names: Abdo
+    given-names: Mohamed Basuny

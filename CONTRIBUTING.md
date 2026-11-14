@@ -1,7 +1,7 @@
 # Contributing
 
 1. Fork the repository and create a branch: `git switch -c feature/short-name`.
-2. Install the development tools: `pip install -e ".[dev]"`.
+2. Install the development tools: `pip install -e ".[dev]"`. Optionally run `pre-commit install` so ruff checks every commit.
 3. Make your change and add or update tests.
 4. Run the same checks as CI:
    ```bash
