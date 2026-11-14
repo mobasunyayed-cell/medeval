@@ -1,7 +1,7 @@
 import pytest
 
 from medeval.compare import CompareError, mcnemar_exact, paired_compare
-from medeval.metrics import breakdown, summarize, wilson_interval
+from medeval.metrics import bootstrap_interval, breakdown, summarize, wilson_interval
 from medeval.runner import Result, Run
 
 
@@ -75,3 +75,24 @@ def test_paired_compare_uses_only_shared_ids_and_needs_overlap():
         paired_compare(a, b)
     partial = Run("B", "d", "t", [res("q0", True)])
     assert paired_compare(a, partial).shared == 1
+
+
+def test_bootstrap_is_close_to_wilson_for_moderate_samples():
+    outcomes = [True] * 50 + [False] * 50
+    low, high = bootstrap_interval(outcomes, resamples=4000)
+    w_low, w_high = wilson_interval(50, 100)
+    assert low == pytest.approx(w_low, abs=0.03) and high == pytest.approx(w_high, abs=0.03)
+
+
+def test_bootstrap_of_nothing_is_uninformative():
+    assert bootstrap_interval([]) == (0.0, 1.0)
+
+
+def test_summarize_supports_both_methods_and_rejects_others():
+    results = [res(str(i), i % 2 == 0) for i in range(20)]
+    wilson = summarize(results, "wilson")
+    boot = summarize(results, "bootstrap")
+    assert wilson.accuracy == boot.accuracy == 0.5
+    assert (wilson.ci_low, wilson.ci_high) != (boot.ci_low, boot.ci_high)
+    with pytest.raises(ValueError, match="method"):
+        summarize(results, "magic")  # type: ignore[arg-type]

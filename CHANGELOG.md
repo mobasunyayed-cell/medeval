@@ -4,6 +4,18 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-11-14
+
+### Added
+- Retries with exponential backoff, concurrent workers and resumable checkpoints for long runs.
+- Bootstrap confidence intervals (`medeval report --ci bootstrap`).
+- Cohen's kappa with linear and quadratic weights, and a `medeval agreement` command.
+- Property-based tests (Hypothesis) and cross-checks against scipy and scikit-learn.
+
+### Fixed
+- Datasets, replay files and checkpoints are split on newline only, so U+2028 and similar
+  characters inside a JSON string can no longer break a line.
+
 ## [0.1.0] - 2026-11-14
 
 ### Added

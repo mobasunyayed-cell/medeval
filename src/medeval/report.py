@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from medeval.compare import Comparison
-from medeval.metrics import Summary, breakdown, summarize
+from medeval.metrics import IntervalMethod, Summary, breakdown, summarize
 from medeval.runner import Run
 
 
@@ -16,19 +16,19 @@ def _row(label: str, s: Summary) -> str:
     return f"| {label} | {s.n} | {s.correct} | {_pct(s.accuracy)} | {interval} |"
 
 
-def _table(title: str, groups: dict[str, Summary]) -> list[str]:
+def _table(title: str, groups: dict[str, Summary], method: str) -> list[str]:
     lines = [
         f"## {title}",
         "",
-        "| Group | N | Correct | Accuracy | 95% CI |",
+        f"| Group | N | Correct | Accuracy | 95% CI ({method}) |",
         "|---|---|---|---|---|",
     ]
     lines += [_row(name, s) for name, s in groups.items()]
     return [*lines, ""]
 
 
-def render_markdown(run: Run) -> str:
-    overall = summarize(run.results)
+def render_markdown(run: Run, interval: IntervalMethod = "wilson") -> str:
+    overall = summarize(run.results, interval)
     errors = [r for r in run.results if r.error]
     misses = [r for r in run.results if not r.correct]
 
@@ -39,9 +39,9 @@ def render_markdown(run: Run) -> str:
         f"- Created: {run.created_at}",
         f"- Questions: {overall.n}, unanswered: {overall.unanswered}, call errors: {len(errors)}",
         "",
-        *_table("Overall", {"all": overall}),
-        *_table("By specialty", breakdown(run.results, "specialty")),
-        *_table("By difficulty", breakdown(run.results, "difficulty")),
+        *_table("Overall", {"all": overall}, interval),
+        *_table("By specialty", breakdown(run.results, "specialty", interval), interval),
+        *_table("By difficulty", breakdown(run.results, "difficulty", interval), interval),
     ]
     if misses:
         lines += ["## Missed questions", ""]
