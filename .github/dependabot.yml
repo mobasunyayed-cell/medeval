@@ -4,7 +4,18 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Keep the minimum versions in pyproject.toml unless a newer one is truly required,
+    # so users are not forced to upgrade for no reason.
+    versioning-strategy: increase-if-necessary
+    open-pull-requests-limit: 3
+    groups:
+      python-dependencies:
+        patterns: ["*"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 3
+    groups:
+      github-actions:
+        patterns: ["*"]
